@@ -40,9 +40,9 @@
           }
         ];
       };
-
-      formatter = pkgs.alejandra;
     };
+
+    formatter = pkgs.alejandra;
 
     devShells.${system} = {
       default = pkgs.mkShellNoCC {
