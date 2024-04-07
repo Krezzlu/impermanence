@@ -37,7 +37,7 @@
 
       formatter = pkgs.alejandra;
 
-      devShells = {
+      devShells.${system} = {
         default = pkgs.mkShellNoCC.mkShellNoCC {
           packages = with pkgs; [
             git
