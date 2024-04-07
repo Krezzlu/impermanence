@@ -1,8 +1,6 @@
 {...}: {
   imports = [
-    ./disko.nix
+    (import ./disko.nix {})
     ./impermanence.nix
-
-    ./configurations.nix
   ];
 }

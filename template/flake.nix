@@ -16,34 +16,39 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {self, ...} @ inputs: let
     system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
+    pkgs = inputs.nixpkgs.legacyPackages.${system};
   in {
     nixosConfigurations = {
-      minimal = nixpkgs.lib.nixosSystem {
+      minimal = inputs.nixpkgs.lib.nixosSystem {
         inherit system;
+
         modules = [
           inputs.disko.nixosModules.default
+          {
+            imports = [
+              (import ./system/disko.nix {})
+            ];
+          }
+
           inputs.impermanence.nixosModules.impermanence
 
           ./system
+          {
+            system.stateVersion = "23.11";
+          }
         ];
       };
 
       formatter = pkgs.alejandra;
+    };
 
-      devShells.${system} = {
-        default = pkgs.mkShellNoCC {
-          packages = with pkgs; [
-            git
-            inputs.disko.packages.default
-          ];
-        };
+    devShells.${system} = {
+      default = pkgs.mkShellNoCC {
+        packages = [
+          inputs.disko.packages.${system}.default
+        ];
       };
     };
   };
