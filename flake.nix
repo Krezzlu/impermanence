@@ -1,15 +1,32 @@
 {
-  description = "A very basic flake";
+  description = "Material for a talk about NixOS Impermanence";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
   };
 
-  outputs = { self, nixpkgs }: {
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
+    supportedSystems = ["x86_64-linux"];
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+    pkgs = forAllSystems (system: nixpkgs.legacyPackages.${system});
+  in {
+    # Typst PDF
+    # programs = throw "TODO"; # slides
 
-    packages.x86_64-linux.hello = nixpkgs.legacyPackages.x86_64-linux.hello;
+    # For sue with `nix flake init --template </path/to/this/flake>#<template>` or
+    # `nix flake new --template .#<template> /path/to/project`
+    templates = {
+      default = {
+        path = ./template;
 
-    packages.x86_64-linux.default = self.packages.x86_64-linux.hello;
+        description = "A flake template for a NixOS setup with impermanence.";
 
+        welcomeText = "";
+      };
+    };
   };
 }
