@@ -21,7 +21,7 @@
     pkgs = inputs.nixpkgs.legacyPackages.${system};
   in {
     nixosConfigurations = {
-      minimal = inputs.nixpkgs.lib.nixosSystem {
+      default = inputs.nixpkgs.lib.nixosSystem {
         inherit system;
 
         modules = [
