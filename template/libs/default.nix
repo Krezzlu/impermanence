@@ -13,83 +13,88 @@
         type = "disk";
         content = {
           type = "gpt";
-          partitions = {
-            "esp" = {
-              size =
-                if efi
-                then "512M"
-                else "1M";
-              type =
-                if efi
-                then "EF00"
-                else "EF02";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-                mountOptions = ["umask=0077"];
-              };
-            };
-
-            "luks" = {
-              size = "100%";
-              content = {
-                type = "luks";
-                name = "crypted";
-                settings.allowDiscards = true;
-
+          partitions =
+            {
+              "luks" = {
+                size = "100%";
                 content = {
-                  type = "btrfs";
-                  extraArgs = ["-f"];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions =
-                        [
-                          "compress=zstd"
-                          "noatime"
-                        ]
-                        ++ (
-                          if ssd
-                          then ["ssd"]
-                          else []
-                        );
-                    };
-                    "/persist" = {
-                      mountpoint = "/persist";
-                      mountOptions =
-                        [
-                          "compress=zstd"
-                          "noatime"
-                        ]
-                        ++ (
-                          if ssd
-                          then ["ssd"]
-                          else []
-                        );
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions =
-                        [
-                          "compress=zstd"
-                          "noatime"
-                        ]
-                        ++ (
-                          if ssd
-                          then ["ssd"]
-                          else []
-                        );
-                    };
-                    "/swap" = {
-                      mountpoint = "/.swapvol";
-                      swap.swapfile.size = swapCapacity;
+                  type = "luks";
+                  name = "crypted";
+                  settings.allowDiscards = true;
+
+                  content = {
+                    type = "btrfs";
+                    extraArgs = ["-f"];
+                    subvolumes = {
+                      "/root" = {
+                        mountpoint = "/";
+                        mountOptions =
+                          [
+                            "compress=zstd"
+                            "noatime"
+                          ]
+                          ++ (
+                            if ssd
+                            then ["ssd"]
+                            else []
+                          );
+                      };
+                      "/persist" = {
+                        mountpoint = "/persist";
+                        mountOptions =
+                          [
+                            "compress=zstd"
+                            "noatime"
+                          ]
+                          ++ (
+                            if ssd
+                            then ["ssd"]
+                            else []
+                          );
+                      };
+                      "/nix" = {
+                        mountpoint = "/nix";
+                        mountOptions =
+                          [
+                            "compress=zstd"
+                            "noatime"
+                          ]
+                          ++ (
+                            if ssd
+                            then ["ssd"]
+                            else []
+                          );
+                      };
+                      "/swap" = {
+                        mountpoint = "/.swapvol";
+                        swap.swapfile.size = swapCapacity;
+                      };
                     };
                   };
                 };
               };
-            };
-          };
+            }
+            // (
+              if efi
+              then {
+                "esp" = {
+                  size = "512M";
+                  type = "EF00";
+                  content = {
+                    type = "filesystem";
+                    format = "vfat";
+                    mountpoint = "/boot";
+                    mountOptions = ["umask=0077"];
+                  };
+                };
+              }
+              else {
+                "boot" = {
+                  size = "512M";
+                  type = "EF02";
+                };
+              }
+            );
         };
       };
     };
