@@ -3,5 +3,4 @@ libs.diskSetup {
   device = "/dev/sda";
   ssd = true;
   swapCapacity = "2G";
-  efi = true;
 }

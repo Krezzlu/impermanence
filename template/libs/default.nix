@@ -3,7 +3,6 @@
     device ? throw "Missing required argument device. (e.g. /dev/sda)",
     swapCapacity ? throw "Missing required argument swapCapacity. (e.g. 16G)",
     ssd ? false,
-    efi ? true,
     ...
   }: {
     disko.devices = {
@@ -13,88 +12,81 @@
         type = "disk";
         content = {
           type = "gpt";
-          partitions =
-            {
-              "luks" = {
-                size = "100%";
-                content = {
-                  type = "luks";
-                  name = "crypted";
-                  settings.allowDiscards = true;
+          partitions = {
+            "boot" = {
+              size = "512M";
+              type = "EF02";
+            };
+            "esp" = {
+              size = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = ["umask=0077"];
+              };
+            };
 
-                  content = {
-                    type = "btrfs";
-                    extraArgs = ["-f"];
-                    subvolumes = {
-                      "/root" = {
-                        mountpoint = "/";
-                        mountOptions =
-                          [
-                            "compress=zstd"
-                            "noatime"
-                          ]
-                          ++ (
-                            if ssd
-                            then ["ssd"]
-                            else []
-                          );
-                      };
-                      "/persist" = {
-                        mountpoint = "/persist";
-                        mountOptions =
-                          [
-                            "compress=zstd"
-                            "noatime"
-                          ]
-                          ++ (
-                            if ssd
-                            then ["ssd"]
-                            else []
-                          );
-                      };
-                      "/nix" = {
-                        mountpoint = "/nix";
-                        mountOptions =
-                          [
-                            "compress=zstd"
-                            "noatime"
-                          ]
-                          ++ (
-                            if ssd
-                            then ["ssd"]
-                            else []
-                          );
-                      };
-                      "/swap" = {
-                        mountpoint = "/.swapvol";
-                        swap.swapfile.size = swapCapacity;
-                      };
+            "luks" = {
+              size = "100%";
+              content = {
+                type = "luks";
+                name = "crypted";
+                settings.allowDiscards = true;
+
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-f"];
+                  subvolumes = {
+                    "/root" = {
+                      mountpoint = "/";
+                      mountOptions =
+                        [
+                          "compress=zstd"
+                          "noatime"
+                        ]
+                        ++ (
+                          if ssd
+                          then ["ssd"]
+                          else []
+                        );
+                    };
+                    "/persist" = {
+                      mountpoint = "/persist";
+                      mountOptions =
+                        [
+                          "compress=zstd"
+                          "noatime"
+                        ]
+                        ++ (
+                          if ssd
+                          then ["ssd"]
+                          else []
+                        );
+                    };
+                    "/nix" = {
+                      mountpoint = "/nix";
+                      mountOptions =
+                        [
+                          "compress=zstd"
+                          "noatime"
+                        ]
+                        ++ (
+                          if ssd
+                          then ["ssd"]
+                          else []
+                        );
+                    };
+                    "/swap" = {
+                      mountpoint = "/.swapvol";
+                      swap.swapfile.size = swapCapacity;
                     };
                   };
                 };
               };
-            }
-            // (
-              if efi
-              then {
-                "esp" = {
-                  size = "512M";
-                  type = "EF00";
-                  content = {
-                    type = "filesystem";
-                    format = "vfat";
-                    mountpoint = "/boot";
-                    mountOptions = ["umask=0077"];
-                  };
-                };
-              }
-              else {
-                "boot" = {
-                  size = "512M";
-                  type = "EF02";
-                };
-              }
-            );
+            };
+          };
         };
       };
     };
