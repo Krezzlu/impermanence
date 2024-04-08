@@ -3,6 +3,7 @@
     device ? throw "Missing required argument device. (e.g. /dev/sda)",
     swapCapacity ? throw "Missing required argument swapCapacity. (e.g. 16G)",
     ssd ? false,
+    efi ? true,
     ...
   }: {
     disko.devices = {
@@ -14,8 +15,14 @@
           type = "gpt";
           partitions = {
             "esp" = {
-              size = "512M";
-              type = "EF00";
+              size =
+                if efi
+                then "512M"
+                else "1M";
+              type =
+                if efi
+                then "EF00"
+                else "EF02";
               content = {
                 type = "filesystem";
                 format = "vfat";

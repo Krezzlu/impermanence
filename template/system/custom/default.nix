@@ -27,6 +27,7 @@
     mutableUsers = false; # Disallow creation of new users and groups
 
     users."admin" = {
+      password = "changeme"; # TODO: Maybe put a throw here.
       isNormalUser = true;
       extraGroups = ["wheel"];
     };

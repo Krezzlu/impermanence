@@ -26,18 +26,15 @@
 
         modules = [
           inputs.disko.nixosModules.default
-          {
-            imports = [
-              (import ./system/disko.nix {})
-            ];
-          }
+          # {
+          #   imports = [
+          #     (import ./system/disko.nix {})
+          #   ];
+          # }
 
           inputs.impermanence.nixosModules.impermanence
 
           ./system
-          {
-            system.stateVersion = "23.11";
-          }
         ];
       };
     };
