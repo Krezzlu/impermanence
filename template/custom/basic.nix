@@ -33,7 +33,7 @@
     };
   };
 
-  services.getty.autoLogin = "demo";
+  services.getty.autoLoginUser = "demo";
   console.keyMap = "de";
 
   time.timeZone = "Europe/Vienna";
