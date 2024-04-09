@@ -4,7 +4,7 @@
 
 ```txt
     `nix-shell -p git`
-    `nix flake new nixos --template git+https://github.com/Krsnik/impermanence#default --extra-experimental-features "nix-command flakes"`
+    `nix flake new nixos --template git+https://github.com/Krezzlu/impermanence#default --extra-experimental-features "nix-command flakes"`
     `cd nixos`
     `nix develop --extra-experimental-features "nix-command flakes"`
     `[CHANGE SETTINGS]`
