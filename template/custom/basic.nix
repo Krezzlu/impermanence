@@ -3,7 +3,7 @@
   lib,
   ...
 }: {
-  networking.hostName = "example";
+  networking.hostName = "nixos";
   networking.firewall.enable = true;
   networking.firewall.allowPing = false;
 
@@ -26,12 +26,15 @@
   users = {
     mutableUsers = false; # Disallow creation of new users and groups
 
-    users."admin" = {
-      password = "changeme"; # TODO: Maybe put a throw here.
+    users."demo" = {
+      password = "demo"; # TODO: Maybe put a throw here.
       isNormalUser = true;
       extraGroups = ["wheel"];
     };
   };
+
+  services.getty.autoLogin = "demo";
+  console.keyMap = "de";
 
   time.timeZone = "Europe/Vienna";
 

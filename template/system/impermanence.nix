@@ -30,7 +30,7 @@
     directories = [
       {
         directory = "/etc/nixos";
-        user = "admin";
+        user = "demo";
         mode = "u=rwx,g=rx,o=rx";
       }
       "/var/log"
@@ -47,7 +47,7 @@
       }
     ];
 
-    users."admin" = {
+    users."demo" = {
       directories = [
         "this-will-persist"
       ];

@@ -21,20 +21,15 @@
     pkgs = inputs.nixpkgs.legacyPackages.${system};
   in {
     nixosConfigurations = {
-      default = inputs.nixpkgs.lib.nixosSystem {
+      nixos = inputs.nixpkgs.lib.nixosSystem {
         inherit system;
 
         modules = [
           inputs.disko.nixosModules.default
-          # {
-          #   imports = [
-          #     (import ./system/disko.nix {})
-          #   ];
-          # }
-
           inputs.impermanence.nixosModules.impermanence
 
           ./system
+          ./custom
         ];
       };
     };
